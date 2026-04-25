@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    tools {
+        maven 'my_maven'
+    }
+    
+    stages {
+        stage ('Parallel_Stage') {
+            parallel {
+                stage ('Code') {
+                    environment {
+                        tool = "Code"
+                    }
+                    steps {
+                        git branch: '$my_choice', url: 'https://github.com/advaithProjects/one.git'
+                        echo "This is $tool Stage"
+                        sleep 10
+                    }
+                }
+                stage ('Build') {
+                    environment {
+                        tool = "Build"
+                    }
+                    steps {
+                        sh 'mvn clean install'
+                        echo "This is $tool Stage"
+                        sleep 10
+                    }
+                }
+                stage ('Arttifact_Id') {
+                    environment {
+                        tool = "Arttifact"
+                    }
+                    steps {
+                        nexusArtifactUploader artifacts: [[artifactId: 'myweb', classifier: '', file: 'target/myweb-8.7.0.war', type: 'war']], credentialsId: 'Nexus', groupId: 'in.javahome', nexusUrl: '54.158.113.95:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'advaithRepo', version: '8.7.0'
+                        echo "This is $tool Stage"
+                        sleep 10
+                    }
+                }
+                stage ('Deploy') {
+                    environment {
+                        tool = "Deploy"
+                    }
+                    steps {
+                        deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'Tomcat', path: '', url: 'http://3.91.149.199:8080/')], contextPath: 'my_app', war: 'target/*.war'
+                        echo "This is $tool Stage"
+                        sleep 10
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+pipeline {
+    agent any 
+    
+    stages {
+        stage ('Parallel-Stage') {
+            parallel {
+                stage ('Code') {
+                    steps {
+                        sleep 10
+                    }
+                }
+                stage ('Build') {
+                    steps {
+                        sleep 10
+                    }
+                }
+                stage ('Test') {
+                    steps {
+                        sleep 10
+                    }
+                }
+                stage ('Deploy') {
+                    steps {
+                        sleep 10
+                    }
+                }
+            }
+        }
+    }
+}

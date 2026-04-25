@@ -1,0 +1,98 @@
+pipeline {
+    agent any
+
+    environment {   # global variable
+        tool = "default"
+    }
+    
+    stages {
+        stage ('default') { 
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Code') {
+            environment {     # local variable
+                tool = "Code"
+            }
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Build') {
+            environment {
+                tool = "Build"
+            }
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Test') {
+            environment {
+                tool = "Test"
+            }
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Deploy') {
+            environment {
+                tool = "Deploy"
+            }
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+    }
+    post {
+        always {
+            mail to: 'sainanda0123@gmail.com',
+            subject: "Build Status: ${currentBuild.fullDisplayName}",
+            body: "The build ${env.BUILD_NUMBER} finished with status: ${currentBuild.currentResult}. View logs at: ${env.BUILD_URL}"
+        }
+    }
+}
+
+-------------------------------------------------------------------------
+
+pipeline {
+    agent {
+	node {
+	   label "slave"
+	}
+    }
+    environment {
+        tool = "default"
+    }
+    
+    stages {
+        stage ('Code') {
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Build') {
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Test') {
+
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+        stage ('Deploy') {
+            steps {
+                echo "This is $tool stage"
+            }
+        }
+    }
+    post {
+        always {
+            mail to: 'sainanda0123@gmail.com',
+            subject: "Build Status: ${currentBuild.fullDisplayName}",
+            body: "The build ${env.BUILD_NUMBER} finished with status: ${currentBuild.currentResult}. View logs at: ${env.BUILD_URL}"
+        }
+    }
+}
