@@ -1,0 +1,22 @@
+services:
+  bus_tickets:
+	container_name: bus_container
+	image: busimage
+	ports:
+	  -"8888:80"
+
+  flight_tickets:
+	container_name: fligt_container
+	image: fightimage
+	ports:
+	  -"9999:80"
+
+  
+  movie_tickets:
+	container_name: movie_container
+	image: movieimage
+	ports:
+	  -"1111:80"
+	
+
+docker-compose up -d

@@ -1,0 +1,115 @@
+###############################nginx with parameter################################
+pipeline {
+    agent any
+    
+    stages {
+        stage ("Code") {
+            steps {
+                git 'https://github.com/advaithProjects/nginx.git'
+            }
+        }
+        stage ("Build") {
+            steps {
+                sh "docker build -t $image_name ." // $image_name
+            }
+        }
+        stage ("Registry") {
+            steps {
+                withDockerRegistry(credentialsId: 'Docker_login') {
+                    sh "docker tag $image_name advaithprojects/docker:$new_tag" // $new_tag
+                    sh "docker push advaithprojects/docker:$new_tag"
+                }
+            }
+        }
+        stage ("Deploy") {
+            steps {
+                sh "docker run -itd --name $add_new_container -p $new_port:80 advaithprojects/docker:$new_tag" 
+                // $add_new_container    &&   $new_port
+            }
+        }
+    }
+}
+------------------------------------------------------------------------------------
+#####################JAVA Project(without parameter)################################
+pipeline {
+    agent any
+    tools {
+        maven "my_maven"
+    }
+    
+    stages {
+        stage ("code") {
+            steps  {
+                git 'https://github.com/advaithProjects/one.git'
+            }
+        }
+        stage ("Build") {
+            steps {
+                sh "mvn clean install"
+                sh "docker build -t myapp:v1 ."
+            }
+        }
+        stage ("Registry") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'java_project') {
+                        sh "docker tag myapp:v1 advaithprojects/java:java_app"
+                        sh "docker push advaithprojects/java:java_app"
+                    }
+                }
+            }
+        }
+        stage ("Deploy") {
+            input {
+                message "Do you want to Depoly?"
+            }
+            steps {
+                sh "docker run -itd --name cont1 -p 2222:8080 advaithprojects/java:java_app"
+            }
+        }
+    }
+}
+####################################################################################
+///////////////////////java_project With string parameter///////////////////////////
+// With string parameter
+pipeline {
+    agent any
+    tools {
+        maven "my_maven"
+    }
+    
+    stages {
+        stage ("code") {
+            steps  {
+                git 'https://github.com/advaithProjects/one.git'
+            }
+        }
+        stage ("Build") {
+            steps {
+                sh "mvn clean install"
+                sh "docker build -t $add_new_image ." 
+                //$add_new_image
+            }
+        }
+        stage ("Registry") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'java_project') {
+                        sh "docker tag $add_new_image advaithprojects/java:$add_new_tag"   
+                        // $add_new_image  & $add_new_tag
+                        sh "docker push advaithprojects/java:$add_new_tag"
+                    }
+                }
+            }
+        }
+        stage ("Deploy") {
+            input {
+                message "Do you want to Depoly?"
+            }
+            steps {
+                sh "docker run -itd --name $add_new_container -p $add_new_port:8080 advaithprojects/java:$add_new_tag"
+                //$add_new_container  &  $add_new_port   & $add_new_tag
+            }
+        }
+    }
+}

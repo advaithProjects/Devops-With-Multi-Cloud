@@ -1,0 +1,55 @@
+MYSQL QUERIES :
+
+
+-- Create Database
+CREATE DATABASE company_db;
+
+-- Use the Database
+USE company_db;
+
+-- Create Table
+CREATE TABLE employees (
+emp_id INT PRIMARY KEY,
+emp_name VARCHAR(100),
+salary DECIMAL(10,2),
+location VARCHAR(100)
+);
+
+-- Insert Employee Data
+INSERT INTO employees (emp_id, emp_name, salary, location) VALUES
+(1, 'Chiranjeevi', 95000.00, 'Hyderabad'),
+(2, 'Pawan Kalyan', 90000.00, 'Vijayawada'),
+(3, 'Mahesh Babu', 92000.00, 'Hyderabad'),
+(4, 'Prabhas', 97000.00, 'Chennai'),
+(5, 'NTR Jr', 91000.00, 'Hyderabad'),
+(6, 'Ram Charan', 93000.00, 'Bangalore'),
+(7, 'Allu Arjun', 94000.00, 'Hyderabad'),
+(8, 'Nani', 85000.00, 'Vizag'),
+(9, 'Venkatesh', 88000.00, 'Hyderabad'),
+(10, 'Nagarjuna', 89000.00, 'Chennai'),
+(11, 'Sharwanand', 83000.00, 'Hyderabad'),
+(12, 'Varun Tej', 82000.00, 'Hyderabad'),
+(13, 'Sai Dharam Tej', 81000.00, 'Vijayawada'),
+(14, 'Kalyan Ram', 80000.00, 'Hyderabad'),
+(15, 'Rana Daggubati', 87000.00, 'Chennai');
+
+-- View Data
+SELECT * FROM employees;
+
+
+
+
+
+
+Dockerfile
+
+
+FROM mysql/mysql-server:5.7
+
+EXPOSE 3306
+
+ENV MYSQL_USER=root
+
+ENV MYSQL_ROOT_PASSWORD=flm123devops
+
+COPY init.sql /docker-entrypoint-initdb.d/
