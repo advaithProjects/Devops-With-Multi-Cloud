@@ -1,0 +1,35 @@
+services:
+  python_app:
+    container_name: cont1
+    image: advaithprojects/python:python-chat-app
+    ports:
+      - "1111:5000"
+    restart: unless-stopped
+    networks:
+      - python_network
+    volumes:
+      - python:/usr/ADVAITH
+
+  nginx_app:
+    container_name: cont2
+    image: shaikmustafa/dm
+    ports:
+      - "2222:80"
+    restart: always
+    networks:
+      - nginx_network
+    volumes:
+      - nginx:/usr/ADVAITH
+
+networks:
+  python_network:
+    driver: bridge
+
+  nginx_network:
+    driver: bridge
+
+volumes:
+  python:
+  nginx:
+	
+	  

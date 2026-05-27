@@ -1,0 +1,62 @@
+pipeline {
+    agent {
+        node {
+            label "slave"
+        }
+    }
+    tools {
+        maven "my_maven"
+    }
+    stages {
+        stage ("Code") {
+            steps {
+                git 'https://github.com/advaithProjects/dockerwebapp.git'
+            }
+        }
+        stage ("COA") {
+            steps {
+                withSonarQubeEnv("mysonar") {
+                    sh "mvn clean verify sonar:sonar -Dsonar.projectKey=Java-Project"
+                }
+            }
+        }
+        stage ("Build") {
+            steps {
+                sh "mvn clean install"
+                sh "cp -r target Docker-app"
+            }
+        }
+        stage ("Artifact") {
+            steps {
+                nexusArtifactUploader artifacts: [[artifactId: 'vprofile', classifier: '', file: 'target/vprofile-v2.war', type: 'war']], credentialsId: 'Nexus', groupId: 'com.visualpathit', nexusUrl: '32.199.177.185:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'advaithRepo', version: 'v2'
+            }
+        }
+        stage ("Images") {
+            steps {
+                sh "docker build -t advaithprojects/javaproject:db Docker-db"
+                sh "docker build -t advaithprojects/javaproject:app Docker-app"
+            }
+        }
+        stage ("Image-Scan") {
+            steps {
+                sh "trivy image advaithprojects/javaproject:db"
+                sh "trivy image advaithprojects/javaproject:app"
+            }
+        }
+        stage ("Push") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'Docker_Hub') {
+                        sh "docker push advaithprojects/javaproject:db"
+                        sh "docker push advaithprojects/javaproject:app"
+                    }
+                }
+            }
+        }
+        stage ("Deploy") {
+            steps {
+                sh "docker stack deploy -c compose.yml flm"
+            }
+        }
+    }
+}
