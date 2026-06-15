@@ -1,0 +1,207 @@
+1  curl -Lo kops https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+
+    2  chmod +x kops
+
+    3  sudo mv kops /usr/local/bin/kops
+
+    4     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+    5  chmod +x kubectl
+
+    6  mv kubectl /usr/local/bin/
+
+    7  kops create cluster --name mustafa.k8s.local --zones=us-east-2a,us-east-2b --master-size=c7i-flex.large --master-count=1 --master-volume-size=20 --node-size=t3.micro --node-count=2 --node-volume-size=20 --image=ami-0fe18bc3cfa53a248
+
+    8  aws s3 ls
+
+    9  export KOPS_STATE_STORE=s3://netflix-bucket-demo007
+
+   10  kops create cluster --name mustafa.k8s.local --zones=us-east-2a,us-east-2b --master-size=c7i-flex.large --master-count=1 --master-volume-size=20 --node-size=t3.micro --node-count=2 --node-volume-size=20 --image=ami-0fe18bc3cfa53a248
+
+   11  kops update cluster --name mustafa.k8s.local --yes --admin
+
+   12  vim deploy.yml
+
+   13  kubectl create -f deploy.yml
+
+   14  kubectl get po
+
+   15  cp deploy.yml statefulset.yml
+
+   16  vim statefulset.yml
+
+   17  kubectl create -f statefulset.yml
+
+   18  kubectl get po
+
+   19  kubectl scale deploy devops --replicas=5
+
+   20  kubectl get po
+
+   21  kubectl scale statefulset flm --replicas=6
+
+   22  kubectl get po
+
+   23  kubectl scale statefulset flm --replicas=3
+
+   24  kubectl get po
+
+   25  vim statefulset.yml
+
+   26  ls
+
+   27  kubectl get no
+
+   28  cp deploy.yml daemonset.yml
+
+   29  vim daemonset.yml
+
+   30  kubectl apply -f daemonset.yml
+
+   31  vim daemonset.yml
+
+   32  kubectl apply -f daemonset.yml
+
+   33  kubectl get po
+
+   34  kops get cluster
+
+   35  kops edit cluster mustafa.k8s.local
+
+   36   kops edit ig --name=mustafa.k8s.local nodes-us-east-2a
+
+   37  kops update cluster --name mustafa.k8s.local --yes --admin
+
+   38  kubectl get nodes
+
+   39  kubectl get po
+
+   40* kops edit ig --name=mustafa.k8s.local nodes-us-east-2
+
+   41  kops update cluster --name mustafa.k8s.local --yes --admin
+
+   42  kubectl get no
+
+   43  kubectl get no  -w
+
+   44  kubectl get no
+
+   45  kubectl get po
+
+   46  kubectl describe pod flm-0
+
+   47  kubectl api-resources
+
+   48  kubectl get ns
+
+   49  kubectl get po
+
+   50  kubectl run pod-1 --image=nginx
+
+   51  kubectl delete pod pod-1
+
+   52  kubectl describe deploy devops
+
+   53  kubectl get po
+
+   54  kubectl get no
+
+   55  kubectl get ns
+
+   56  kubectl get po -n kube-system
+
+   57  kubectl get deploy -n kube-system
+
+   58  kubectl get statefulset -n kube-system
+
+   59  kubectl create ns mustafa
+
+   60  kubectl get ns
+
+   61  vim pod.yml
+
+   62  kubectl create -f pod.yml
+
+   63  kubectl get po -n mustafa
+
+   64  kubectl create ns dev
+
+   65  vim pod.yml
+
+   66  vi pod.yml
+
+   67  kubectl create -f pod.yml -n dev
+
+   68  kubectl get ns
+
+   69  kubectl get po
+
+   70  kubectl describe pod flm-0
+
+   71  kubectl config view
+
+   72  curl -sS https://webi.sh/kubens | sh; source ~/.config/envman/PATH.env
+
+   73  kubens
+
+   74  kubens dev
+
+   75  kubens
+
+   76  kubectl get po
+
+   77  kubens mustafa
+
+   78  kubens
+
+   79  kubectl config set-context --current --namespace=dev
+
+   80* kubectl get
+
+   81  kubectl config set-context --current --namespace=default
+
+   82  kubectl get po
+
+   83  kubectl get po --all-namespaces
+
+   84  kubectl get po
+
+   85  kubectl delete deploy devops
+
+   86  kubectl delete statefulset --all
+
+   87  kubectl delete daemonset --all
+
+   88  kubectl get po
+
+   89  vim deploy.yml
+
+   90  kubectl create -f deploy.yml
+
+   91  cp deploy.yml rc.yml
+
+   92  vim rc.yml
+
+   93  kubectl create -f rc.yml
+
+   94  kubectl get po
+
+   95  kubectl get po --show-labels
+
+   96  vim svc.yml
+
+   97  kubectl create -f svc.yml
+
+   98  kubectl get svc
+
+   99  vim deploy.yml
+
+  100  kubectl delete rc --all
+
+  101  kubectl create -f rc.yml
+
+  102  kops get cluster
+
+  103  kops delete cluster --name mustafa.k8s.local --yes
+
+  104  history
