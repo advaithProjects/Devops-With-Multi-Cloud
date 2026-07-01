@@ -16,7 +16,7 @@
 
     9  export KOPS_STATE_STORE=s3://advaith.devops77flm
 
-   10  kops create cluster --name advaith.k8s.local --zones=us-east-1a,us-east-1b --master-size=c7i-flex.large --master-count=1 --master-volume-size=20 --node-size=t3.micro --node-count=2 --node-volume-size=20 --image=ami-091138d0f0d41ff90
+   10  kops create cluster --name advaith.k8s.local --zones=us-east-1a,us-east-1b --master-size=c7i-flex.large --master-count=1 --master-volume-size=20 --node-size=t3.micro --node-count=2 --node-volume-size=20 --image=ami-0b6d9d3d33ba97d99
 
    11  kops update cluster --name mustafa.k8s.local --yes --admin
 
